@@ -7,9 +7,12 @@ public class GUI extends JFrame implements ActionListener{
 	private JPanel topPanel;
 	private JPanel bottomPanel;
 
-	private JTextField textField;
+	private JTextField id;
+	private JTextField info;
+	private JTextField time;
 	private JButton button;
 	private JComboBox<String> comboBox;
+
 	
 	
 	public GUI(){
@@ -30,16 +33,24 @@ public class GUI extends JFrame implements ActionListener{
 		comboBox.addActionListener(this);
 
 		//text fields
-		textField = new JTextField();
-		textField.setPreferredSize(new Dimension(250,40));
+		id = new JTextField();
+		id.setPreferredSize(new Dimension(250,40));
 
-		JButton button = new JButton("Submit");
+		info = new JTextField();
+		info.setPreferredSize(new Dimension(250,40));
+
+		time = new JTextField();
+		time.setPreferredSize(new Dimension(250,40));
+
+		button = new JButton("Submit");
 		button.addActionListener(this);
 
 
 		
 		topPanel.add(comboBox, BorderLayout.CENTER);
-		bottomPanel.add(textField);
+		bottomPanel.add(id);
+		bottomPanel.add(info);
+		bottomPanel.add(time);
 		bottomPanel.add(button);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,7 +72,7 @@ public class GUI extends JFrame implements ActionListener{
 		}
 
 		if (e.getSource() == button){
-			System.out.println("Hello World");
+			System.out.println(id.getText());
 		}
 		
 	}
