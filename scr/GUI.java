@@ -108,12 +108,19 @@ public class GUI extends JFrame implements ActionListener{
 			}
 		}
 
-		//this area needs more work
-		//when the button is pressed, the bottom text area should output what was input. 
-		//can delete this feature if not necessary
-		if(e.getSource() == button)
-		{
-			output.setText("Information submitted!\n" + boxOne.getText() + "\n" + boxTwo.getText() + "\n" + boxThree.getText() + "\n" );
+		// this area needs more work
+		// when the button is pressed, the bottom text area should output what was
+		// input.
+		// can delete this feature if not necessary
+		// if (e.getSource() == button) {
+		//	output.setText("Information submitted!\n");
+		//}
+		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) {
+			output.setText("Information submitted." + "\n" + "Owner ID\n" + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year)\n "
+					+ boxTwo.getText() + "\n" + "Residency Time\n" + boxThree.getText());
+		} else if (combo.getSelectedItem().equals("Client")) {
+			output.setText("Information submitted." + "\n" + "Client ID\n" + boxOne.getText() + "\n" + "Approximate Time\n" + boxTwo.getText() + "\n"
+					+ "Job Deadline\n" + boxThree.getText());
 		}
 	}
 
