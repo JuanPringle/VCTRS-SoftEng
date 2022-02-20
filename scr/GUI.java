@@ -83,21 +83,17 @@ public class GUI extends JFrame implements ActionListener {
 		this.setVisible(true);		
 	}
 
-	//Action listener method
+	// action listener method
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == combo)
-		{
-			//Sees which choice in the dropdown gets selected 
-			//And changes the labels accordingly
-			if (combo.getSelectedItem().equals("Owner"))
-			{
+		if (e.getSource() == combo) {
+			// sees which choice in the dropdown gets selected
+			// and changes the labels accordingly
+			if (combo.getSelectedItem().equals("Owner")) {
 				labelA.setText("Owner ID");
-				labelB.setText("Vehicle Info");
+				labelB.setText("Vehicle Info (Make, Model, Year)");
 				labelC.setText("Residency Time");
-			}
-			else if (combo.getSelectedItem().equals("Client"))
-			{
+			} else if (combo.getSelectedItem().equals("Client")) {
 				labelA.setText("Client ID");
 				labelB.setText("Approximate Time");
 				labelC.setText("Job Deadline");
@@ -105,17 +101,12 @@ public class GUI extends JFrame implements ActionListener {
 		}
 		
 		//when the button is pressed, the bottom text area should output what was input. 
-		if(e.getSource() == button)
-		{
-			try 
-			{
-				fileProcess();
-			} 
-			catch (IOException e1) 
-			{
-				e1.printStackTrace();
-			}
-			output.setText("Information submitted!\n" + boxOne.getText() + "\n" + boxTwo.getText() + "\n" + boxThree.getText() + "\n" );
+		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) {
+			output.setText("Information submitted." + "\n" + "Owner ID\n" + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year)\n "
+					+ boxTwo.getText() + "\n" + "Residency Time\n" + boxThree.getText());
+		} else if (combo.getSelectedItem().equals("Client")) {
+			output.setText("Information submitted." + "\n" + "Client ID\n" + boxOne.getText() + "\n" + "Approximate Time\n" + boxTwo.getText() + "\n"
+					+ "Job Deadline\n" + boxThree.getText());
 		}
 	}
 	
