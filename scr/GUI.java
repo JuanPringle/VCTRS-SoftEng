@@ -87,21 +87,17 @@ public class GUI extends JFrame implements ActionListener{
 		
 	}
 
-	//action listener method
+	// action listener method
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == combo)
-		{
-			//sees which choice in the dropdown gets selected 
-			//and changes the labels accordingly
-			if (combo.getSelectedItem().equals("Owner"))
-			{
+		if (e.getSource() == combo) {
+			// sees which choice in the dropdown gets selected
+			// and changes the labels accordingly
+			if (combo.getSelectedItem().equals("Owner")) {
 				labelA.setText("Owner ID");
-				labelB.setText("Vehicle Info");
+				labelB.setText("Vehicle Info (Make, Model, Year)");
 				labelC.setText("Residency Time");
-			}
-			else if (combo.getSelectedItem().equals("Client"))
-			{
+			} else if (combo.getSelectedItem().equals("Client")) {
 				labelA.setText("Client ID");
 				labelB.setText("Approximate Time");
 				labelC.setText("Job Deadline");
