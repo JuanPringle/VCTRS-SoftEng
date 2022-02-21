@@ -102,12 +102,21 @@ public class GUI extends JFrame implements ActionListener {
 		
 		//when the button is pressed, the bottom text area should output what was input. 
 		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) {
-			output.setText("Information submitted." + "\n" + "Owner ID\n" + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year)\n "
-					+ boxTwo.getText() + "\n" + "Residency Time\n" + boxThree.getText());
-		} else if (combo.getSelectedItem().equals("Client")) {
-			output.setText("Information submitted." + "\n" + "Client ID\n" + boxOne.getText() + "\n" + "Approximate Time\n" + boxTwo.getText() + "\n"
-					+ "Job Deadline\n" + boxThree.getText());
-		}
+			try 
+				{
+					fileProcess();
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+				//output.setText("Information submitted!\n" + boxOne.getText() + "\n" + boxTwo.getText() + "\n" + boxThree.getText() + "\n" );
+				output.setText("Information submitted." + "\n" + "Owner ID\n" + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year)\n "
+								+ boxTwo.getText() + "\n" + "Residency Time\n" + boxThree.getText());
+					} else if (combo.getSelectedItem().equals("Client")) {
+						output.setText("Information submitted." + "\n" + "Client ID\n" + boxOne.getText() + "\n" + "Approximate Time\n" + boxTwo.getText() + "\n"
+								+ "Job Deadline\n" + boxThree.getText());
+			}
 	}
 	
 	public void fileProcess() throws IOException {
