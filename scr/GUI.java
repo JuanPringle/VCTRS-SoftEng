@@ -1,82 +1,147 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.FileNotFoundException;
 
-public class GUI extends JFrame implements ActionListener{
-	private JPanel topPanel;
-	private JPanel bottomPanel;
 
-	private JTextField id;
-	private JTextField info;
-	private JTextField time;
+import java.io.*;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
+public class GUI extends JFrame implements ActionListener {
+
+	// Instance variables
+	private JPanel dropdownPanel, textInputPanel, buttonInputPanel, textOutputPanel;
+	private JTextField boxOne, boxTwo, boxThree;
+	private JTextArea output;
+	private JLabel labelA, labelB, labelC;
+	private JComboBox combo;
 	private JButton button;
-	private JComboBox<String> comboBox;
+	private File ownerFile = new File("Owner.txt");
+	private File clientFile = new File("Client.txt");	
+	
+	public GUI() {
 
-	
-	
-	public GUI(){
+		//Setting the layout, size, and title of the GUI
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		this.setTitle("Cars");
+		this.setSize(600,800);
+
+		//Instantaited panels in the GUI
+		dropdownPanel = new JPanel();
+
+		textInputPanel = new JPanel();
+		textInputPanel.setLayout(new GridLayout(3,2));
+
+		buttonInputPanel = new JPanel();
+
+		textOutputPanel = new JPanel();
+		textOutputPanel.setLayout(new BorderLayout());
 
 		
-		//panels + layout
-		topPanel = new JPanel();
-		topPanel.setBounds(0,0,750,150);
-		topPanel.setBackground(Color.red);
+		//Combo box instantiation, goes into the dropdown Panel
+		String[] choices = {" ","Owner", "Client"};
+		combo = new JComboBox(choices);
+		combo.addActionListener(this);
 
-		bottomPanel = new JPanel();
-		bottomPanel.setBounds(0,150,750, 600);
-		bottomPanel.setBackground(Color.GRAY);
+		//All the text boxes and their labels, goes into the text input panel
+		boxOne = new JTextField();
+		boxOne.setPreferredSize(new Dimension(250,40));
+		boxTwo = new JTextField();
+		boxTwo.setPreferredSize(new Dimension(250,40));
+		boxThree = new JTextField();
+		boxThree.setPreferredSize(new Dimension(250,40));
 
-		//Dropdown menu
-		String[] options = {"Owner", "Client"};
-		comboBox = new JComboBox<String>(options);
-		comboBox.addActionListener(this);
+		labelA = new JLabel("Nothing Selected", SwingConstants.CENTER);
+		labelB = new JLabel("Nothing Selected", SwingConstants.CENTER);
+		labelC = new JLabel("Nothing Selected", SwingConstants.CENTER);
 
-		//text fields
-		id = new JTextField();
-		id.setPreferredSize(new Dimension(250,40));
+		//Text area at the lowest panel of the JFrame
+		//Not editable, plan to add feature that outputs what will be input by the user
+		output = new JTextArea();
+		output.setEditable(false);
+		output.setMargin( new Insets(10,10,10,10) );
 
-		info = new JTextField();
-		info.setPreferredSize(new Dimension(250,40));
-
-		time = new JTextField();
-		time.setPreferredSize(new Dimension(250,40));
-
+		//Button to submit what was input, goes into the button input panel
 		button = new JButton("Submit");
 		button.addActionListener(this);
 
-
+		//Adds all elements to their respective panels
+		dropdownPanel.add(combo);
+		textInputPanel.add(labelA);
+		textInputPanel.add(boxOne);
+		textInputPanel.add(labelB);
+		textInputPanel.add(boxTwo);
+		textInputPanel.add(labelC);
+		textInputPanel.add(boxThree);
+		buttonInputPanel.add(button);
+		textOutputPanel.add(output);
 		
-		topPanel.add(comboBox, BorderLayout.CENTER);
-		bottomPanel.add(id);
-		bottomPanel.add(info);
-		bottomPanel.add(time);
-		bottomPanel.add(button);
+		//Adds each panel to the main JFrame
+		this.add(dropdownPanel);
+		this.add(textInputPanel);
+		this.add(buttonInputPanel);
+		this.add(textOutputPanel);
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setTitle("Vehicual Cloud Program");
-		this.setLayout(null);
-		this.add(topPanel);
-		this.add(bottomPanel);
 		this.pack();
-		this.setSize(750,750);
-		this.setVisible(true);
-		
-		
+		this.setVisible(true);		
 	}
 
+	// action listener method
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == comboBox) {
-			System.out.println(comboBox.getSelectedItem());
-		}
+		if (e.getSource() == combo) {
+			// sees which choice in the dropdown gets selected
+			// and changes the labels accordingly
+			if (combo.getSelectedItem().equals("Owner")) {
+				labelA.setText("Owner ID");
+				labelB.setText("Vehicle Info (Make, Model, Year)");
+				labelC.setText("Residency Time");
+			} else if (combo.getSelectedItem().equals("Client")) {
+				labelA.setText("Client ID");
+				labelB.setText("Approximate Time");
+				labelC.setText("Job Deadline");
+			}
 
-		if (e.getSource() == button){
-			System.out.println(id.getText());
 		}
 		
+		//when the button is pressed, the bottom text area should output what was input. 
+		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) {
+			try 
+				{
+					fileProcess();
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+				//output.setText("Information submitted!\n" + boxOne.getText() + "\n" + boxTwo.getText() + "\n" + boxThree.getText() + "\n" );
+				output.setText("Information submitted." + "\n" + "Owner ID\n" + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year)\n "
+								+ boxTwo.getText() + "\n" + "Residency Time\n" + boxThree.getText());
+					} else if (combo.getSelectedItem().equals("Client")) {
+						output.setText("Information submitted." + "\n" + "Client ID\n" + boxOne.getText() + "\n" + "Approximate Time\n" + boxTwo.getText() + "\n"
+								+ "Job Deadline\n" + boxThree.getText());
+			}
 	}
-	public static void main(String[] args) throws FileNotFoundException {
-		new GUI();
-	}
+	
+	public void fileProcess() throws IOException {
+			if(combo.getSelectedItem().equals("Owner")) {
+				BufferedWriter ownerWriter = new BufferedWriter(new FileWriter(ownerFile,true));
+				ownerWriter.write(boxOne.getText());
+				ownerWriter.newLine();
+				ownerWriter.write(boxTwo.getText());
+				ownerWriter.newLine();
+				ownerWriter.write(boxThree.getText());
+				ownerWriter.newLine();
+				ownerWriter.newLine();
+				ownerWriter.close();
+			}
+			else if (combo.getSelectedItem().equals("Client")) {
+				BufferedWriter clientWriter = new BufferedWriter(new FileWriter(clientFile,true));
+				clientWriter.write(boxOne.getText());
+				clientWriter.newLine();
+				clientWriter.write(boxTwo.getText());
+				clientWriter.newLine();
+				clientWriter.write(boxThree.getText());
+				clientWriter.newLine();
+				clientWriter.newLine();
+				clientWriter.close();
+			}
+		}
 }
