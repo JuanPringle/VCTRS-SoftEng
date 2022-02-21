@@ -1,8 +1,11 @@
 
 
 import java.io.*;
-import java.nio.file.StandardOpenOption;
-import java.util.*;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
 public class GUI extends JFrame implements ActionListener {
 
 	// Instance variables
