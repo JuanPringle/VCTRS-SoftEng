@@ -1,7 +1,4 @@
-
-
 import java.io.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -115,33 +112,33 @@ public class GUI extends JFrame implements ActionListener {
 					e1.printStackTrace();
 				}
 				//output.setText("Information submitted!\n" + boxOne.getText() + "\n" + boxTwo.getText() + "\n" + boxThree.getText() + "\n" );
-				output.setText("Information submitted." + "\n" + "Owner ID\n" + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year)\n "
-								+ boxTwo.getText() + "\n" + "Residency Time\n" + boxThree.getText());
+				output.setText("Information submitted." + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): "
+								+ boxTwo.getText() + "\n" + "Residency Time: " + boxThree.getText());
 					} else if (combo.getSelectedItem().equals("Client")) {
-						output.setText("Information submitted." + "\n" + "Client ID\n" + boxOne.getText() + "\n" + "Approximate Time\n" + boxTwo.getText() + "\n"
-								+ "Job Deadline\n" + boxThree.getText());
+						output.setText("Information submitted." + "\n" + "Client ID: " + boxOne.getText() + "\n" + "Approximate Time: " + boxTwo.getText() + "\n"
+								+ "Job Deadline: " + boxThree.getText());
 			}
 	}
 	
 	public void fileProcess() throws IOException {
 			if(combo.getSelectedItem().equals("Owner")) {
 				BufferedWriter ownerWriter = new BufferedWriter(new FileWriter(ownerFile,true));
-				ownerWriter.write(boxOne.getText());
+				ownerWriter.write("Owner ID: " + boxOne.getText());
 				ownerWriter.newLine();
-				ownerWriter.write(boxTwo.getText());
+				ownerWriter.write("Vehicle Info: " + boxTwo.getText());
 				ownerWriter.newLine();
-				ownerWriter.write(boxThree.getText());
+				ownerWriter.write("Residency Time: " + boxThree.getText());
 				ownerWriter.newLine();
 				ownerWriter.newLine();
 				ownerWriter.close();
 			}
 			else if (combo.getSelectedItem().equals("Client")) {
 				BufferedWriter clientWriter = new BufferedWriter(new FileWriter(clientFile,true));
-				clientWriter.write(boxOne.getText());
+				clientWriter.write("Client ID" + boxOne.getText());
 				clientWriter.newLine();
-				clientWriter.write(boxTwo.getText());
+				clientWriter.write("Approximate Time" + boxTwo.getText());
 				clientWriter.newLine();
-				clientWriter.write(boxThree.getText());
+				clientWriter.write("Job Deadline" + boxThree.getText());
 				clientWriter.newLine();
 				clientWriter.newLine();
 				clientWriter.close();
