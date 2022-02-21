@@ -114,7 +114,7 @@ public class GUI extends JFrame implements ActionListener {
 				//output.setText("Information submitted!\n" + boxOne.getText() + "\n" + boxTwo.getText() + "\n" + boxThree.getText() + "\n" );
 				output.setText("Information submitted." + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): "
 								+ boxTwo.getText() + "\n" + "Residency Time: " + boxThree.getText());
-					} else if (combo.getSelectedItem().equals("Client")) {
+					} else if (combo.getSelectedItem().equals("Client") && e.getSource() == button) {
 						output.setText("Information submitted." + "\n" + "Client ID: " + boxOne.getText() + "\n" + "Approximate Time: " + boxTwo.getText() + "\n"
 								+ "Job Deadline: " + boxThree.getText());
 			}
