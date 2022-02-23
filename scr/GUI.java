@@ -2,6 +2,9 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.time.*;
+import java.time.format.*; 
+import java.awt.Desktop;
 
 public class GUI extends JFrame implements ActionListener {
 
@@ -12,8 +15,13 @@ public class GUI extends JFrame implements ActionListener {
 	private JLabel labelA, labelB, labelC;
 	private JComboBox combo;
 	private JButton button;
+	private JButton button2;
 	private File ownerFile = new File("Owner.txt");
-	private File clientFile = new File("Client.txt");	
+	private File clientFile = new File("Client.txt");
+	
+	LocalDateTime time = LocalDateTime.now();
+	DateTimeFormatter format = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
+	String formattedTime = time.format(format);
 	
 	public GUI() {
 
@@ -30,13 +38,14 @@ public class GUI extends JFrame implements ActionListener {
 		textInputPanel.setLayout(new GridLayout(3,2));
 
 		buttonInputPanel = new JPanel();
+		buttonInputPanel = new JPanel();
 
 		textOutputPanel = new JPanel();
 		textOutputPanel.setLayout(new BorderLayout());
 
 		
 		//Combo box instantiation, goes into the dropdown Panel
-		String[] choices = {" ","Owner", "Client"};
+		String[] choices = {"Select ","Owner", "Client"};
 		combo = new JComboBox(choices);
 		combo.addActionListener(this);
 
@@ -61,6 +70,9 @@ public class GUI extends JFrame implements ActionListener {
 		//Button to submit what was input, goes into the button input panel
 		button = new JButton("Submit");
 		button.addActionListener(this);
+		
+		button2= new JButton("Show Logs");
+		button2.addActionListener(this);
 
 		//Adds all elements to their respective panels
 		dropdownPanel.add(combo);
@@ -71,6 +83,7 @@ public class GUI extends JFrame implements ActionListener {
 		textInputPanel.add(labelC);
 		textInputPanel.add(boxThree);
 		buttonInputPanel.add(button);
+		buttonInputPanel.add(button2);
 		textOutputPanel.add(output);
 		
 		//Adds each panel to the main JFrame
@@ -92,13 +105,44 @@ public class GUI extends JFrame implements ActionListener {
 			if (combo.getSelectedItem().equals("Owner")) {
 				labelA.setText("Owner ID");
 				labelB.setText("Vehicle Info (Make, Model, Year)");
-				labelC.setText("Residency Time");
+				labelC.setText("Residency Duration");
+				button2.setText("Show Owner Log");
 			} else if (combo.getSelectedItem().equals("Client")) {
 				labelA.setText("Client ID");
-				labelB.setText("Approximate Time");
+				labelB.setText("Approximate Job Duration");
 				labelC.setText("Job Deadline");
+				button2.setText("Show Client Log");
 			}
 
+		}
+		
+		if(e.getSource() == button2) {
+
+			Desktop desktop = Desktop.getDesktop();
+			//File ownerFile1 = new File("Owner.txt"); 
+
+			try 
+			{
+			if (combo.getSelectedItem().equals("Owner")){
+				if(ownerFile.exists()){
+					desktop.open(ownerFile);   
+				}
+			} else if (combo.getSelectedItem().equals("Client")){
+				if(clientFile.exists()){
+					desktop.open(clientFile);
+				}
+			} else {
+				desktop.open(ownerFile);   
+				desktop.open(clientFile);
+			}
+				
+			} 
+			catch (IOException e1) 
+			{
+				e1.printStackTrace();
+			} 
+		
+			
 		}
 		
 		//when the button is pressed, the bottom text area should output what was input. 
@@ -114,22 +158,24 @@ public class GUI extends JFrame implements ActionListener {
 		} 
 		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
 		{
-			output.setText("Information submitted." + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Time: " + boxThree.getText());	
+			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());	
 		}	
 		else if (combo.getSelectedItem().equals("Client") && e.getSource() == button) 
 		{
-			output.setText("Information submitted." + "\n" + "Client ID: " + boxOne.getText() + "\n" + "Approximate Time: " + boxTwo.getText() + "\n" + "Job Deadline: " + boxThree.getText());
+			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n" + "Approximate Job Duration: " + boxTwo.getText() + "\n" + "Job Deadline: " + boxThree.getText());
 		}
 	}
 	
 	public void fileProcess() throws IOException {
 			if(combo.getSelectedItem().equals("Owner")) {
 				BufferedWriter ownerWriter = new BufferedWriter(new FileWriter(ownerFile,true));
+				ownerWriter.write("Timestamp: " + formattedTime);
+				ownerWriter.newLine();
 				ownerWriter.write("Owner ID: " + boxOne.getText());
 				ownerWriter.newLine();
 				ownerWriter.write("Vehicle Info: " + boxTwo.getText());
 				ownerWriter.newLine();
-				ownerWriter.write("Residency Time: " + boxThree.getText());
+				ownerWriter.write("Residency Duration: " + boxThree.getText());
 				ownerWriter.newLine();
 				ownerWriter.newLine();
 				ownerWriter.close();
@@ -138,7 +184,7 @@ public class GUI extends JFrame implements ActionListener {
 				BufferedWriter clientWriter = new BufferedWriter(new FileWriter(clientFile,true));
 				clientWriter.write("Client ID: " + boxOne.getText());
 				clientWriter.newLine();
-				clientWriter.write("Approximate Time: " + boxTwo.getText());
+				clientWriter.write("Approximate Job Duration : " + boxTwo.getText());
 				clientWriter.newLine();
 				clientWriter.write("Job Deadline: " + boxThree.getText());
 				clientWriter.newLine();
