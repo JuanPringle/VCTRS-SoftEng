@@ -182,6 +182,8 @@ public class GUI extends JFrame implements ActionListener {
 			}
 			else if (combo.getSelectedItem().equals("Client")) {
 				BufferedWriter clientWriter = new BufferedWriter(new FileWriter(clientFile,true));
+				clientWriter.write("Timestamp: " + formattedTime);
+				clientWriter.newLine();
 				clientWriter.write("Client ID: " + boxOne.getText());
 				clientWriter.newLine();
 				clientWriter.write("Approximate Job Duration : " + boxTwo.getText());
