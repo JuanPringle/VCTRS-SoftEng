@@ -16,4 +16,9 @@ public class Owner {
 	public String getResidencyTime(){
 		return ResidencyTime;
 	}
+	
+	public String toString(){
+		return "OwnerID:" + OwnerID + "\nVehicle Info:" + VehicleInfo + "\nResidency Time:" + ResidencyTime;
+
+	}
 }

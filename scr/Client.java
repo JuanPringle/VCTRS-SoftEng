@@ -18,5 +18,8 @@ public class Client {
 	public String getJobDeadline(){
 		return jobDeadline;
 	}
+	public String toString(){
+		return "Client ID: " + ClientID + "\nDuration: " + approximateTime + "\nDeadline:" + jobDeadline;
+	}
 	
 }

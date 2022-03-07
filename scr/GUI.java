@@ -116,6 +116,7 @@ public class GUI extends JFrame implements ActionListener {
 
 		}
 		
+		//opens the
 		if(e.getSource() == button2) {
 
 			Desktop desktop = Desktop.getDesktop();
@@ -150,6 +151,7 @@ public class GUI extends JFrame implements ActionListener {
 			try 
 			{
 				fileProcess();
+				
 			} 
 			catch (IOException e1) 
 			{
@@ -158,11 +160,17 @@ public class GUI extends JFrame implements ActionListener {
 		} 
 		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
 		{
-			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());	
+			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());
+			boxOne.setText("");
+			boxTwo.setText("");
+			boxThree.setText("");	
 		}	
 		else if (combo.getSelectedItem().equals("Client") && e.getSource() == button) 
 		{
 			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n" + "Approximate Job Duration: " + boxTwo.getText() + "\n" + "Job Deadline: " + boxThree.getText());
+			boxOne.setText("");
+			boxTwo.setText("");
+			boxThree.setText("");
 		}
 	}
 	
@@ -170,26 +178,17 @@ public class GUI extends JFrame implements ActionListener {
 			if(combo.getSelectedItem().equals("Owner")) {
 				BufferedWriter ownerWriter = new BufferedWriter(new FileWriter(ownerFile,true));
 				ownerWriter.write("Timestamp: " + formattedTime);
-				ownerWriter.newLine();
-				ownerWriter.write("Owner ID: " + boxOne.getText());
-				ownerWriter.newLine();
-				ownerWriter.write("Vehicle Info: " + boxTwo.getText());
-				ownerWriter.newLine();
-				ownerWriter.write("Residency Duration: " + boxThree.getText());
-				ownerWriter.newLine();
+				Owner newOwner = new Owner(Integer.parseInt(boxOne.getText()), boxTwo.getText(), boxThree.getText());
+				ownerWriter.write(newOwner.toString());
 				ownerWriter.newLine();
 				ownerWriter.close();
 			}
 			else if (combo.getSelectedItem().equals("Client")) {
 				BufferedWriter clientWriter = new BufferedWriter(new FileWriter(clientFile,true));
+				clientWriter.newLine();
 				clientWriter.write("Timestamp: " + formattedTime);
-				clientWriter.newLine();
-				clientWriter.write("Client ID: " + boxOne.getText());
-				clientWriter.newLine();
-				clientWriter.write("Approximate Job Duration : " + boxTwo.getText());
-				clientWriter.newLine();
-				clientWriter.write("Job Deadline: " + boxThree.getText());
-				clientWriter.newLine();
+				Client newClient = new Client(Integer.parseInt(boxOne.getText()), boxTwo.getText(), boxThree.getText());
+				clientWriter.write(newClient.toString());
 				clientWriter.newLine();
 				clientWriter.close();
 			}
