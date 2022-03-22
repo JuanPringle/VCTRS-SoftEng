@@ -1,25 +1,37 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Controller {
-    private ArrayList <Vehicle> Vehicles= new ArrayList<Vehicle>(); 
-    private ArrayList <Job> Jobs= new ArrayList<Job>();
-    private ArrayList <Checkpoint> Checkpoints= new ArrayList<Checkpoint>();
+    private Queue<Vehicle> Vehicles; 
+    private Queue<Job> Jobs;
+    private ArrayList <Checkpoint> Checkpoints;
 
+    public Controller(){
+        Vehicles = new LinkedList<Vehicle>(); 
+        Jobs = new LinkedList<Job>();
+        Checkpoints= new ArrayList<Checkpoint>();
+    }
 
-    void addCheckpoint(Checkpoint c){
-        Checkpoints.add(c);
+    void submitJob(Job j){
+        Jobs.add(j);
     }
 
     void recruitVehicle(Vehicle v){
         Vehicles.add(v);
     }
 
-    void addJob(Job j){
-        Jobs.add(j);
+    void addCheckpoint(Checkpoint c){
+        Checkpoints.add(c);
     }
 
-    void assignJob(Vehicle v, Job j){
-        j.addJob(v);
+    
+    void calculateCompletionTime(){
+        double totalDuration = 0;
+        for (Job currentJob : Jobs) {
+            totalDuration+= currentJob.duration;
+            currentJob.completionTime = totalDuration;
+        }
     }
 
 
