@@ -29,9 +29,13 @@ public class Controller {
     void calculateCompletionTime(){
         double totalDuration = 0;
         for (Job currentJob : Jobs) {
-            totalDuration+= currentJob.duration;
+            totalDuration+= currentJob.jobDuration;
             currentJob.completionTime = totalDuration;
         }
+    }
+
+    Queue<Job> getJobs(){
+        return this.Jobs;
     }
 
 

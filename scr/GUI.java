@@ -14,10 +14,10 @@ public class GUI extends JFrame implements ActionListener {
 	private JTextArea output;
 	private JLabel labelA, labelB, labelC;
 	private JComboBox combo;
-	private JButton button;
-	private JButton button2;
+	private JButton button,button2, button3;
 	private File ownerFile = new File("Owner.txt");
 	private File clientFile = new File("Client.txt");
+	private Controller controller = new Controller();
 	
 	LocalDateTime time = LocalDateTime.now();
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
@@ -38,7 +38,7 @@ public class GUI extends JFrame implements ActionListener {
 		textInputPanel.setLayout(new GridLayout(3,2));
 
 		buttonInputPanel = new JPanel();
-		buttonInputPanel = new JPanel();
+		buttonInputPanel.setLayout(new FlowLayout());
 
 		textOutputPanel = new JPanel();
 		textOutputPanel.setLayout(new BorderLayout());
@@ -74,6 +74,9 @@ public class GUI extends JFrame implements ActionListener {
 		button2= new JButton("Show Logs");
 		button2.addActionListener(this);
 
+		button3 = new JButton("Stuff");
+		button3.addActionListener(this);
+
 		//Adds all elements to their respective panels
 		dropdownPanel.add(combo);
 		textInputPanel.add(labelA);
@@ -84,6 +87,7 @@ public class GUI extends JFrame implements ActionListener {
 		textInputPanel.add(boxThree);
 		buttonInputPanel.add(button);
 		buttonInputPanel.add(button2);
+		buttonInputPanel.add(button3);
 		textOutputPanel.add(output);
 		
 		//Adds each panel to the main JFrame
@@ -96,56 +100,25 @@ public class GUI extends JFrame implements ActionListener {
 		this.setVisible(true);		
 	}
 
-	// action listener method
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == combo) {
-			// sees which choice in the dropdown gets selected
-			// and changes the labels accordingly
+
 			if (combo.getSelectedItem().equals("Owner")) {
-				labelA.setText("Owner ID");
+				labelA.setText("Vehicle ID");
 				labelB.setText("Vehicle Info (Make, Model, Year)");
 				labelC.setText("Residency Duration");
 				button2.setText("Show Owner Log");
+				button3.setText("Do Stuff");
 			} else if (combo.getSelectedItem().equals("Client")) {
-				labelA.setText("Client ID");
-				labelB.setText("Approximate Job Duration");
-				labelC.setText("Job Deadline");
+				labelA.setText("Job ID");
+				labelB.setText("Job Deadline");
+				labelC.setText("Approximate Job Duration");
 				button2.setText("Show Client Log");
+				button3.setText("Calculate Completion Time");
 			}
-
 		}
-		
-		if(e.getSource() == button2) {
 
-			Desktop desktop = Desktop.getDesktop();
-			//File ownerFile1 = new File("Owner.txt"); 
-
-			try 
-			{
-			if (combo.getSelectedItem().equals("Owner")){
-				if(ownerFile.exists()){
-					desktop.open(ownerFile);   
-				}
-			} else if (combo.getSelectedItem().equals("Client")){
-				if(clientFile.exists()){
-					desktop.open(clientFile);
-				}
-			} else {
-				desktop.open(ownerFile);   
-				desktop.open(clientFile);
-			}
-				
-			} 
-			catch (IOException e1) 
-			{
-				e1.printStackTrace();
-			} 
-		
-			
-		}
-		
-		//when the button is pressed, the bottom text area should output what was input. 
 		if (e.getSource() == button) {
 			try 
 			{
@@ -156,42 +129,83 @@ public class GUI extends JFrame implements ActionListener {
 				e1.printStackTrace();
 			}
 		} 
+		
+		if(e.getSource() == button2) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				if (combo.getSelectedItem().equals("Owner")){
+					if(ownerFile.exists()){
+						desktop.open(ownerFile);   
+					}
+				} else if (combo.getSelectedItem().equals("Client")){
+					if(clientFile.exists()){
+						desktop.open(clientFile);
+					}
+				} else {
+					desktop.open(ownerFile);   
+					desktop.open(clientFile);
+				}
+				
+			} 
+			catch (IOException e1) {
+				e1.printStackTrace();
+			} 
+		}
+
+		if (combo.getSelectedItem().equals("Client") && e.getSource() == button3) {
+			controller.calculateCompletionTime();
+			String data = "";
+			int counter = 1;
+			for (Job job: controller.getJobs()) {
+				data += "Job " + counter + ": " + job.completionTime + "\n"; 
+				counter++;
+			}
+			output.setText(data);
+		}
+		
 		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
 		{
-			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());	
+			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());
+			emptyText();		
 		}	
 		else if (combo.getSelectedItem().equals("Client") && e.getSource() == button) 
 		{
 			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n" + "Approximate Job Duration: " + boxTwo.getText() + "\n" + "Job Deadline: " + boxThree.getText());
+			emptyText();
 		}
 	}
 	
 	public void fileProcess() throws IOException {
+			int id = Integer.parseInt(boxOne.getText());
+			String info = boxTwo.getText();
+			double duration = Double.parseDouble(boxThree.getText());
+			BufferedWriter fileWriter;
+			
 			if(combo.getSelectedItem().equals("Owner")) {
-				BufferedWriter ownerWriter = new BufferedWriter(new FileWriter(ownerFile,true));
-				ownerWriter.write("Timestamp: " + formattedTime);
-				ownerWriter.newLine();
-				ownerWriter.write("Owner ID: " + boxOne.getText());
-				ownerWriter.newLine();
-				ownerWriter.write("Vehicle Info: " + boxTwo.getText());
-				ownerWriter.newLine();
-				ownerWriter.write("Residency Duration: " + boxThree.getText());
-				ownerWriter.newLine();
-				ownerWriter.newLine();
-				ownerWriter.close();
+				fileWriter = new BufferedWriter(new FileWriter(ownerFile,true));
+				Vehicle newVehicle = new Vehicle(id, info,duration);
+				controller.recruitVehicle(newVehicle);
+				fileWriter.write("Timestamp: " + formattedTime);
+				fileWriter.newLine();
+				fileWriter.write(newVehicle.toString());
+				fileWriter.newLine();
+				fileWriter.close();
 			}
 			else if (combo.getSelectedItem().equals("Client")) {
-				BufferedWriter clientWriter = new BufferedWriter(new FileWriter(clientFile,true));
-				clientWriter.write("Timestamp: " + formattedTime);
-				clientWriter.newLine();
-				clientWriter.write("Client ID: " + boxOne.getText());
-				clientWriter.newLine();
-				clientWriter.write("Approximate Job Duration : " + boxTwo.getText());
-				clientWriter.newLine();
-				clientWriter.write("Job Deadline: " + boxThree.getText());
-				clientWriter.newLine();
-				clientWriter.newLine();
-				clientWriter.close();
+				fileWriter = new BufferedWriter(new FileWriter(clientFile,true));
+				Job newJob = new Job(id, info,duration);
+				controller.submitJob(newJob);
+				fileWriter.write("\nTimestamp: " + formattedTime + "\n");
+				fileWriter.write(newJob.toString());
+				fileWriter.newLine();
+				fileWriter.close();
 			}
+			
+		}
+
+		void emptyText(){
+			boxOne.setText("");
+			boxTwo.setText("");
+			boxThree.setText("");
 		}
 }
