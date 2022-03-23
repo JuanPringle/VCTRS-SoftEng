@@ -7,7 +7,6 @@ import java.time.format.*;
 import java.awt.Desktop;
 
 public class GUI extends JFrame implements ActionListener {
-
 	// Instance variables
 	private JPanel dropdownPanel, textInputPanel, buttonInputPanel, textOutputPanel;
 	private JTextField boxOne, boxTwo, boxThree;
@@ -117,6 +116,7 @@ public class GUI extends JFrame implements ActionListener {
 				button2.setText("Show Client Log");
 				button3.setText("Calculate Completion Time");
 			}
+			emptyText();
 		}
 
 		if (e.getSource() == button) {
@@ -152,6 +152,7 @@ public class GUI extends JFrame implements ActionListener {
 			} 
 		}
 
+		//outputs the data into the output box
 		if (combo.getSelectedItem().equals("Client") && e.getSource() == button3) {
 			controller.calculateCompletionTime();
 			String data = "";
@@ -166,13 +167,14 @@ public class GUI extends JFrame implements ActionListener {
 		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
 		{
 			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());
-			emptyText();		
+		
 		}	
 		else if (combo.getSelectedItem().equals("Client") && e.getSource() == button) 
 		{
-			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n" + "Approximate Job Duration: " + boxTwo.getText() + "\n" + "Job Deadline: " + boxThree.getText());
-			emptyText();
+			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n"+ "Job Deadline: " + boxTwo.getText() + "\n" + "Approximate Job Duration: " + boxThree.getText());
+
 		}
+		emptyText();
 	}
 	
 	public void fileProcess() throws IOException {

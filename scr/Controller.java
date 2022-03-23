@@ -25,7 +25,6 @@ public class Controller {
         Checkpoints.add(c);
     }
 
-    
     void calculateCompletionTime(){
         double totalDuration = 0;
         for (Job currentJob : Jobs) {
