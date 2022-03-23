@@ -8,10 +8,10 @@ public class Vehicle {
 		return Schedule;
 	}
 	public void arrive () {
-		
+		System.out.print("Vehicle has arrived");
 	}
 	
 	public void depart() {
-		
+		System.out.print("Vehicle has departed");
 	}
 }
