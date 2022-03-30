@@ -156,10 +156,8 @@ public class GUI extends JFrame implements ActionListener {
 		if (combo.getSelectedItem().equals("Client") && e.getSource() == button3) {
 			controller.calculateCompletionTime();
 			String data = "";
-			int counter = 1;
 			for (Job job: controller.getJobs()) {
-				data += "Job " + counter + ": " + job.completionTime + "\n"; 
-				counter++;
+				data += "Job " + job.id + ": " + job.completionTime + "\n"; 
 			}
 			output.setText(data);
 		}
