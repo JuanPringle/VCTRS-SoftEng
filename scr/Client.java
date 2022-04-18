@@ -1,3 +1,4 @@
+
 public class Client extends User {
 	private String approximateTime;
 	private String jobDeadline;
@@ -8,6 +9,7 @@ public class Client extends User {
 		this.approximateTime=approximateTime;
 		this.jobDeadline=jobDeadline;
 		this.jobSubmitted=jobSubmitted;
+
 	}
 	public int getClientID(){
 		return this.id;

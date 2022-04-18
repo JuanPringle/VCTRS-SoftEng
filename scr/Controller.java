@@ -3,6 +3,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Controller {
+
     private Queue<Vehicle> Vehicles; 
     private Queue<Job> Jobs;
     private ArrayList <Checkpoint> Checkpoints;
@@ -11,6 +12,7 @@ public class Controller {
         Vehicles = new LinkedList<Vehicle>(); 
         Jobs = new LinkedList<Job>();
         Checkpoints= new ArrayList<Checkpoint>();
+
     }
 
     void submitJob(Job j){

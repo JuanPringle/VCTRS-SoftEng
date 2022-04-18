@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.time.*;
 import java.time.format.*; 
 import java.awt.Desktop;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class GUI extends JFrame implements ActionListener {
 	// Instance variables
@@ -17,6 +19,10 @@ public class GUI extends JFrame implements ActionListener {
 	private File ownerFile = new File("Owner.txt");
 	private File clientFile = new File("Client.txt");
 	private Controller controller = new Controller();
+	static ServerSocket serverSocket;
+	static Socket socket;
+	static DataInputStream inputStream;
+    static DataOutputStream outputStream;
 	
 	LocalDateTime time = LocalDateTime.now();
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
@@ -124,7 +130,7 @@ public class GUI extends JFrame implements ActionListener {
 			{
 				fileProcess();
 			} 
-			catch (IOException e1) 
+			catch (Exception e1) 
 			{
 				e1.printStackTrace();
 			}
@@ -175,30 +181,35 @@ public class GUI extends JFrame implements ActionListener {
 		emptyText();
 	}
 	
-	public void fileProcess() throws IOException {
+	public void fileProcess(){
 			int id = Integer.parseInt(boxOne.getText());
 			String info = boxTwo.getText();
 			double duration = Double.parseDouble(boxThree.getText());
-			BufferedWriter fileWriter;
-			
-			if(combo.getSelectedItem().equals("Owner")) {
-				fileWriter = new BufferedWriter(new FileWriter(ownerFile,true));
-				Vehicle newVehicle = new Vehicle(id, info,duration);
-				controller.recruitVehicle(newVehicle);
-				fileWriter.write("Timestamp: " + formattedTime);
-				fileWriter.newLine();
-				fileWriter.write(newVehicle.toString());
-				fileWriter.newLine();
-				fileWriter.close();
-			}
-			else if (combo.getSelectedItem().equals("Client")) {
-				fileWriter = new BufferedWriter(new FileWriter(clientFile,true));
-				Job newJob = new Job(id, info,duration);
-				controller.submitJob(newJob);
-				fileWriter.write("\nTimestamp: " + formattedTime + "\n");
-				fileWriter.write(newJob.toString());
-				fileWriter.newLine();
-				fileWriter.close();
+			String messageIn = "";
+
+			try {
+				System.out.println("User Logged in");
+				socket = new Socket("localhost", 3000);
+				inputStream = new DataInputStream(socket.getInputStream());
+				outputStream = new DataOutputStream(socket.getOutputStream());
+
+				if(combo.getSelectedItem().equals("Owner")) {
+					Vehicle newVehicle = new Vehicle(id, info,duration);
+					outputStream.writeUTF(newVehicle.toString());
+					controller.recruitVehicle(newVehicle);
+					if (messageIn.equals("accepted")) 
+						writeToFile(newVehicle.toString(), ownerFile);
+				}
+				else if (combo.getSelectedItem().equals("Client")) {
+					Job newJob = new Job(id, info,duration);
+					outputStream.writeUTF(newJob.toString());
+					controller.submitJob(newJob);
+					if (messageIn.equals("accepted")) 
+						writeToFile(newJob.toString(), clientFile);
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			
 		}
@@ -207,5 +218,15 @@ public class GUI extends JFrame implements ActionListener {
 			boxOne.setText("");
 			boxTwo.setText("");
 			boxThree.setText("");
+		}
+
+		void writeToFile(String toFile, File file) throws IOException{
+				BufferedWriter fileWriter;
+         		fileWriter = new BufferedWriter(new FileWriter(file,true));
+				fileWriter.write("Timestamp: " + formattedTime);
+				fileWriter.newLine();
+				fileWriter.write(toFile);
+				fileWriter.newLine();
+				fileWriter.close();
 		}
 }
