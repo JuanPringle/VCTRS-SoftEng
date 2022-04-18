@@ -192,12 +192,14 @@ public class GUI extends JFrame implements ActionListener {
 				socket = new Socket("localhost", 3000);
 				inputStream = new DataInputStream(socket.getInputStream());
 				outputStream = new DataOutputStream(socket.getOutputStream());
+				messageIn = inputStream.readUTF();
 
 				if(combo.getSelectedItem().equals("Owner")) {
 					Vehicle newVehicle = new Vehicle(id, info,duration);
 					outputStream.writeUTF(newVehicle.toString());
 					controller.recruitVehicle(newVehicle);
 					if (messageIn.equals("accepted")) 
+						System.out.println(messageIn);
 						writeToFile(newVehicle.toString(), ownerFile);
 				}
 				else if (combo.getSelectedItem().equals("Client")) {
@@ -205,6 +207,7 @@ public class GUI extends JFrame implements ActionListener {
 					outputStream.writeUTF(newJob.toString());
 					controller.submitJob(newJob);
 					if (messageIn.equals("accepted")) 
+						System.out.println(messageIn);
 						writeToFile(newJob.toString(), clientFile);
 				}
 				

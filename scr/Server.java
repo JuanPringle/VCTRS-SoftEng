@@ -34,10 +34,12 @@ public class Server {
                 input = new Scanner(System.in);
                 response = input.nextLine();
                 if (response.toLowerCase().equals("accept")) {
+                    System.out.println("Submission accepted");
                     messageOut = "accepted";
                 }
                 else if(response.toLowerCase().equals("reject"))
                 {
+                    System.out.println("Submission rejected");
                     messageOut = "rejected";
                 }
                  else {
