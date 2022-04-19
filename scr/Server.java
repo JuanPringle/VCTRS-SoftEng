@@ -22,13 +22,14 @@ public class Server {
             System.out.println("Waiting for request");
             serverSocket = new ServerSocket(3000);
             socket = serverSocket.accept();
-            System.out.println("User Connected");
-            System.out.println("Awaiting message");
 
-            inputStream = new DataInputStream(socket.getInputStream());
-            outputStream = new DataOutputStream(socket.getOutputStream());
+            while (!messageIn.equals("exit")) {
+                System.out.println("User Connected");
+                System.out.println("Awaiting message");
 
-            while (isRunning) {
+                inputStream = new DataInputStream(socket.getInputStream());
+                outputStream = new DataOutputStream(socket.getOutputStream());
+                
                 messageIn = inputStream.readUTF();
                 System.out.println("Accept or reject?");
                 input = new Scanner(System.in);

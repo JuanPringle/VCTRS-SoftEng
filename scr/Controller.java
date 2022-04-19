@@ -37,8 +37,6 @@ public class Controller {
 
     Queue<Job> getJobs(){
         return this.Jobs;
-    }
-
-
-    
+    }    
 }
+

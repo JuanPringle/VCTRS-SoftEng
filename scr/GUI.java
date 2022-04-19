@@ -7,6 +7,7 @@ import java.time.format.*;
 import java.awt.Desktop;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class GUI extends JFrame implements ActionListener {
 	// Instance variables
@@ -28,8 +29,8 @@ public class GUI extends JFrame implements ActionListener {
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
 	String formattedTime = time.format(format);
 	
-	public GUI() {
-
+	public GUI() throws UnknownHostException, IOException {
+		
 		//Setting the layout, size, and title of the GUI
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -181,31 +182,32 @@ public class GUI extends JFrame implements ActionListener {
 		emptyText();
 	}
 	
-	public void fileProcess(){
+	public void fileProcess() throws UnknownHostException, IOException{
 			int id = Integer.parseInt(boxOne.getText());
 			String info = boxTwo.getText();
 			double duration = Double.parseDouble(boxThree.getText());
 			String messageIn = "";
-
+			
 			try {
 				System.out.println("User Logged in");
 				socket = new Socket("localhost", 3000);
 				inputStream = new DataInputStream(socket.getInputStream());
 				outputStream = new DataOutputStream(socket.getOutputStream());
-				messageIn = inputStream.readUTF();
-
+				
 				if(combo.getSelectedItem().equals("Owner")) {
 					Vehicle newVehicle = new Vehicle(id, info,duration);
 					outputStream.writeUTF(newVehicle.toString());
 					controller.recruitVehicle(newVehicle);
+					messageIn = inputStream.readUTF();
 					if (messageIn.equals("accepted")) 
 						System.out.println(messageIn);
 						writeToFile(newVehicle.toString(), ownerFile);
 				}
 				else if (combo.getSelectedItem().equals("Client")) {
-					Job newJob = new Job(id, info,duration);
+					Job newJob = new Job(id,info,duration);
 					outputStream.writeUTF(newJob.toString());
 					controller.submitJob(newJob);
+					messageIn = inputStream.readUTF();
 					if (messageIn.equals("accepted")) 
 						System.out.println(messageIn);
 						writeToFile(newJob.toString(), clientFile);
@@ -223,9 +225,9 @@ public class GUI extends JFrame implements ActionListener {
 			boxThree.setText("");
 		}
 
-		void writeToFile(String toFile, File file) throws IOException{
-				BufferedWriter fileWriter;
-         		fileWriter = new BufferedWriter(new FileWriter(file,true));
+		void writeToFile(String toFile, File file) throws IOException {
+				BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, true));
+				fileWriter.newLine();
 				fileWriter.write("Timestamp: " + formattedTime);
 				fileWriter.newLine();
 				fileWriter.write(toFile);
