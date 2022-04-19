@@ -31,7 +31,7 @@ public class GUI extends JFrame implements ActionListener {
 		this.setTitle("Cars");
 		this.setSize(600,800);
 
-		//Instantaited panels in the GUI
+		//Instantiated panels in the GUI
 		dropdownPanel = new JPanel();
 
 		textInputPanel = new JPanel();
