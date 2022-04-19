@@ -30,7 +30,10 @@ public class GUI extends JFrame implements ActionListener {
 	String formattedTime = time.format(format);
 	
 	public GUI() throws UnknownHostException, IOException {
-		
+		System.out.println("User Logged in");
+		socket = new Socket("localhost", 3000);
+		inputStream = new DataInputStream(socket.getInputStream());
+		outputStream = new DataOutputStream(socket.getOutputStream());
 		//Setting the layout, size, and title of the GUI
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -109,14 +112,14 @@ public class GUI extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == combo) {
-
 			if (combo.getSelectedItem().equals("Owner")) {
 				labelA.setText("Vehicle ID");
 				labelB.setText("Vehicle Info (Make, Model, Year)");
 				labelC.setText("Residency Duration");
 				button2.setText("Show Owner Log");
 				button3.setText("Do Stuff");
-			} else if (combo.getSelectedItem().equals("Client")) {
+			} 
+			else if (combo.getSelectedItem().equals("Client")) {
 				labelA.setText("Job ID");
 				labelB.setText("Job Deadline");
 				labelC.setText("Approximate Job Duration");
@@ -140,7 +143,7 @@ public class GUI extends JFrame implements ActionListener {
 		if(e.getSource() == button2) {
 			Desktop desktop = Desktop.getDesktop();
 			try {
-				if (combo.getSelectedItem().equals("Owner")){
+				if(combo.getSelectedItem().equals("Owner")){
 					if(ownerFile.exists()){
 						desktop.open(ownerFile);   
 					}
@@ -154,13 +157,13 @@ public class GUI extends JFrame implements ActionListener {
 				}
 				
 			} 
-			catch (IOException e1) {
+			catch(IOException e1) {
 				e1.printStackTrace();
 			} 
 		}
 
 		//outputs the data into the output box
-		if (combo.getSelectedItem().equals("Client") && e.getSource() == button3) {
+		if(combo.getSelectedItem().equals("Client") && e.getSource() == button3) {
 			controller.calculateCompletionTime();
 			String data = "";
 			for (Job job: controller.getJobs()) {
@@ -169,12 +172,12 @@ public class GUI extends JFrame implements ActionListener {
 			output.setText(data);
 		}
 		
-		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
+		if(combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
 		{
 			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());
 		
 		}	
-		else if (combo.getSelectedItem().equals("Client") && e.getSource() == button) 
+		else if(combo.getSelectedItem().equals("Client") && e.getSource() == button) 
 		{
 			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n"+ "Job Deadline: " + boxTwo.getText() + "\n" + "Approximate Job Duration: " + boxThree.getText());
 
@@ -187,30 +190,26 @@ public class GUI extends JFrame implements ActionListener {
 			String info = boxTwo.getText();
 			double duration = Double.parseDouble(boxThree.getText());
 			String messageIn = "";
-			
 			try {
-				System.out.println("User Logged in");
-				socket = new Socket("localhost", 3000);
-				inputStream = new DataInputStream(socket.getInputStream());
-				outputStream = new DataOutputStream(socket.getOutputStream());
-				
 				if(combo.getSelectedItem().equals("Owner")) {
 					Vehicle newVehicle = new Vehicle(id, info,duration);
 					outputStream.writeUTF(newVehicle.toString());
 					controller.recruitVehicle(newVehicle);
 					messageIn = inputStream.readUTF();
-					if (messageIn.equals("accepted")) 
-						System.out.println(messageIn);
+					if(messageIn.equals("accept")) {
+						System.out.println("Vehicle Accepted");
 						writeToFile(newVehicle.toString(), ownerFile);
+					}
 				}
-				else if (combo.getSelectedItem().equals("Client")) {
+				else if(combo.getSelectedItem().equals("Client")) {
 					Job newJob = new Job(id,info,duration);
 					outputStream.writeUTF(newJob.toString());
 					controller.submitJob(newJob);
 					messageIn = inputStream.readUTF();
-					if (messageIn.equals("accepted")) 
-						System.out.println(messageIn);
+					if(messageIn.equals("accept")) {
+						System.out.println("Job Accepted");
 						writeToFile(newJob.toString(), clientFile);
+					}
 				}
 				
 			} catch (Exception e) {

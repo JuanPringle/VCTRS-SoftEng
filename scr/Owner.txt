@@ -1,3 +1,15 @@
 
-Timestamp: 04-18-2022 20:17:16
-ID: 51/nDuration: 51.0/nModel: 51
+Timestamp: 04-19-2022 14:15:29
+ID: 15
+Duration: 15.0
+Model: 15
+
+Timestamp: 04-19-2022 14:28:28
+ID: 15
+Duration: 16.0
+Model: 16
+
+Timestamp: 04-19-2022 14:28:28
+ID: 17
+Duration: 17.0
+Model: 17

@@ -9,17 +9,20 @@ public class Client extends User {
 		this.approximateTime=approximateTime;
 		this.jobDeadline=jobDeadline;
 		this.jobSubmitted=jobSubmitted;
-
 	}
-	public int getClientID(){
+	
+	public int getClientID() {
 		return this.id;
 	}
-	public String getApproximateTime(){
+	
+	public String getApproximateTime() {
 		return approximateTime;
 	}
-	public String getJobDeadline(){
+	
+	public String getJobDeadline() {
 		return jobDeadline;
 	}
+	
 	public void submitJob(Job job) {
 		
 	}
