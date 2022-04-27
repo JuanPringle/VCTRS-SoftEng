@@ -7,6 +7,8 @@ import java.time.format.*;
 import java.awt.Desktop;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.sql.*;
 
 public class GUI extends JFrame implements ActionListener {
 	// Instance variables
@@ -23,13 +25,22 @@ public class GUI extends JFrame implements ActionListener {
 	static Socket socket;
 	static DataInputStream inputStream;
     static DataOutputStream outputStream;
+    static Connection connection = null;
+	//this part is the address and name of your database server: jdbc:mysql://localhost:3306/VC3
+	//this part of the string is for time adjustment: ?useTimezone=true&serverTimezone=UTC
+	static String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
+	static String username = "root";
+	static String password = "tosin0503#";
 	
 	LocalDateTime time = LocalDateTime.now();
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
 	String formattedTime = time.format(format);
 	
-	public GUI() {
-
+	public GUI() throws UnknownHostException, IOException {
+		System.out.println("User Logged in");
+		socket = new Socket("localhost", 3000);
+		inputStream = new DataInputStream(socket.getInputStream());
+		outputStream = new DataOutputStream(socket.getOutputStream());
 		//Setting the layout, size, and title of the GUI
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -108,14 +119,14 @@ public class GUI extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == combo) {
-
 			if (combo.getSelectedItem().equals("Owner")) {
 				labelA.setText("Vehicle ID");
 				labelB.setText("Vehicle Info (Make, Model, Year)");
 				labelC.setText("Residency Duration");
 				button2.setText("Show Owner Log");
 				button3.setText("Do Stuff");
-			} else if (combo.getSelectedItem().equals("Client")) {
+			} 
+			else if (combo.getSelectedItem().equals("Client")) {
 				labelA.setText("Job ID");
 				labelB.setText("Job Deadline");
 				labelC.setText("Approximate Job Duration");
@@ -139,7 +150,7 @@ public class GUI extends JFrame implements ActionListener {
 		if(e.getSource() == button2) {
 			Desktop desktop = Desktop.getDesktop();
 			try {
-				if (combo.getSelectedItem().equals("Owner")){
+				if(combo.getSelectedItem().equals("Owner")){
 					if(ownerFile.exists()){
 						desktop.open(ownerFile);   
 					}
@@ -153,13 +164,13 @@ public class GUI extends JFrame implements ActionListener {
 				}
 				
 			} 
-			catch (IOException e1) {
+			catch(IOException e1) {
 				e1.printStackTrace();
 			} 
 		}
 
 		//outputs the data into the output box
-		if (combo.getSelectedItem().equals("Client") && e.getSource() == button3) {
+		if(combo.getSelectedItem().equals("Client") && e.getSource() == button3) {
 			controller.calculateCompletionTime();
 			String data = "";
 			for (Job job: controller.getJobs()) {
@@ -168,12 +179,12 @@ public class GUI extends JFrame implements ActionListener {
 			output.setText(data);
 		}
 		
-		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
+		if(combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
 		{
 			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());
 		
 		}	
-		else if (combo.getSelectedItem().equals("Client") && e.getSource() == button) 
+		else if(combo.getSelectedItem().equals("Client") && e.getSource() == button) 
 		{
 			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n"+ "Job Deadline: " + boxTwo.getText() + "\n" + "Approximate Job Duration: " + boxThree.getText());
 
@@ -181,34 +192,46 @@ public class GUI extends JFrame implements ActionListener {
 		emptyText();
 	}
 	
-	public void fileProcess(){
+	public void fileProcess() throws UnknownHostException, IOException{
 			int id = Integer.parseInt(boxOne.getText());
 			String info = boxTwo.getText();
 			double duration = Double.parseDouble(boxThree.getText());
 			String messageIn = "";
-
 			try {
-				System.out.println("User Logged in");
-				socket = new Socket("localhost", 3000);
-				inputStream = new DataInputStream(socket.getInputStream());
-				outputStream = new DataOutputStream(socket.getOutputStream());
-				messageIn = inputStream.readUTF();
-
 				if(combo.getSelectedItem().equals("Owner")) {
 					Vehicle newVehicle = new Vehicle(id, info,duration);
 					outputStream.writeUTF(newVehicle.toString());
 					controller.recruitVehicle(newVehicle);
-					if (messageIn.equals("accepted")) 
-						System.out.println(messageIn);
+					messageIn = inputStream.readUTF();
+					if(messageIn.equals("accept")) {
+						System.out.println("Vehicle Accepted");
 						writeToFile(newVehicle.toString(), ownerFile);
-				}
-				else if (combo.getSelectedItem().equals("Client")) {
-					Job newJob = new Job(id, info,duration);
+						//declares a connection to your database
+						connection = DriverManager.getConnection(url, username, password);
+						//creates an insert query
+						String sql = "INSERT INTO table1" + "(ClientID , name)" + "VALUES (23, 'David Cruise')";
+						//establishes the connection session
+						Statement statement = connection.createStatement();
+						//executes the query 
+						int row = statement.executeUpdate(sql);
+						//the return value is the indication of success or failure of the query execution
+						if (row > 0)
+							System.out.println("Data was inserted!");
+
+						connection.close();
+						
+					}
+						
+			}
+				else if(combo.getSelectedItem().equals("Client")) {
+					Job newJob = new Job(id,info,duration);
 					outputStream.writeUTF(newJob.toString());
 					controller.submitJob(newJob);
-					if (messageIn.equals("accepted")) 
-						System.out.println(messageIn);
+					messageIn = inputStream.readUTF();
+					if(messageIn.equals("accept")) {
+						System.out.println("Job Accepted");
 						writeToFile(newJob.toString(), clientFile);
+					}
 				}
 				
 			} catch (Exception e) {
@@ -223,9 +246,9 @@ public class GUI extends JFrame implements ActionListener {
 			boxThree.setText("");
 		}
 
-		void writeToFile(String toFile, File file) throws IOException{
-				BufferedWriter fileWriter;
-         		fileWriter = new BufferedWriter(new FileWriter(file,true));
+		void writeToFile(String toFile, File file) throws IOException {
+				BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, true));
+				fileWriter.newLine();
 				fileWriter.write("Timestamp: " + formattedTime);
 				fileWriter.newLine();
 				fileWriter.write(toFile);
