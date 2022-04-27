@@ -208,7 +208,7 @@ public class GUI extends JFrame implements ActionListener {
 					if(messageIn.equals("accept")) {
 						System.out.println("Vehicle Accepted");
 						writeToFile(newVehicle.toString(), ownerFile);
-						String sql = "INSERT INTO table1" + "(ClientID , name)" + "VALUES ("+ id +"," + info +")"; 
+						String sql = "INSERT INTO table1" + "(OwnerID , name)" + "VALUES ("+ id +"," + info +")"; 
 						Statement statement = connection.createStatement();
 						int row = statement.executeUpdate(sql);
 						if (row > 0)
