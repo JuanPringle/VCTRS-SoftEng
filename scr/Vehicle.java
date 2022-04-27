@@ -1,17 +1,15 @@
-import java.util.Date;
-
 public class Vehicle {
-	private Date Schedule;
-	private String info;
+    private int id;
+    private String model;
+    private double residencyDuration;
 
-	public Date getSchedule() {
-		return Schedule;
-	}
-	public void arrive () {
-		System.out.print("Vehicle has arrived");
-	}
-	
-	public void depart() {
-		System.out.print("Vehicle has departed");
-	}
+    public Vehicle(int id, String model, double duration ){
+        this.id = id;
+        this.model = model;
+        this.residencyDuration = duration;
+    }
+
+    public String toString(){
+        return "ID: " + id + "/nDuration: " + residencyDuration + "/nModel: " + model ;
+    }
 }

@@ -5,40 +5,56 @@ import javax.swing.*;
 import java.time.*;
 import java.time.format.*; 
 import java.awt.Desktop;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.sql.*;
 
 public class GUI extends JFrame implements ActionListener {
-
 	// Instance variables
 	private JPanel dropdownPanel, textInputPanel, buttonInputPanel, textOutputPanel;
 	private JTextField boxOne, boxTwo, boxThree;
 	private JTextArea output;
 	private JLabel labelA, labelB, labelC;
 	private JComboBox combo;
-	private JButton button;
-	private JButton button2;
+	private JButton button,button2, button3;
 	private File ownerFile = new File("Owner.txt");
 	private File clientFile = new File("Client.txt");
+	private Controller controller = new Controller();
+	static ServerSocket serverSocket;
+	static Socket socket;
+	static DataInputStream inputStream;
+    static DataOutputStream outputStream;
+    static Connection connection = null;
+	//this part is the address and name of your database server: jdbc:mysql://localhost:3306/VC3
+	//this part of the string is for time adjustment: ?useTimezone=true&serverTimezone=UTC
+	static String url = "jdbc:mysql://localhost:3306/vc3?useTimezone=true&serverTimezone=UTC";
+	static String username = "root";
+	static String password = "tosin0503#";
 	
 	LocalDateTime time = LocalDateTime.now();
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
 	String formattedTime = time.format(format);
 	
-	public GUI() {
-
+	public GUI() throws UnknownHostException, IOException {
+		System.out.println("User Logged in");
+		socket = new Socket("localhost", 3000);
+		inputStream = new DataInputStream(socket.getInputStream());
+		outputStream = new DataOutputStream(socket.getOutputStream());
 		//Setting the layout, size, and title of the GUI
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setTitle("Cars");
 		this.setSize(600,800);
 
-		//Instantiated panels in the GUI
+		//Instantaited panels in the GUI
 		dropdownPanel = new JPanel();
 
 		textInputPanel = new JPanel();
 		textInputPanel.setLayout(new GridLayout(3,2));
 
 		buttonInputPanel = new JPanel();
-		buttonInputPanel = new JPanel();
+		buttonInputPanel.setLayout(new FlowLayout());
 
 		textOutputPanel = new JPanel();
 		textOutputPanel.setLayout(new BorderLayout());
@@ -74,6 +90,9 @@ public class GUI extends JFrame implements ActionListener {
 		button2= new JButton("Show Logs");
 		button2.addActionListener(this);
 
+		button3 = new JButton("Stuff");
+		button3.addActionListener(this);
+
 		//Adds all elements to their respective panels
 		dropdownPanel.add(combo);
 		textInputPanel.add(labelA);
@@ -84,6 +103,7 @@ public class GUI extends JFrame implements ActionListener {
 		textInputPanel.add(boxThree);
 		buttonInputPanel.add(button);
 		buttonInputPanel.add(button2);
+		buttonInputPanel.add(button3);
 		textOutputPanel.add(output);
 		
 		//Adds each panel to the main JFrame
@@ -96,102 +116,150 @@ public class GUI extends JFrame implements ActionListener {
 		this.setVisible(true);		
 	}
 
-	// action listener method
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == combo) {
-			// sees which choice in the dropdown gets selected
-			// and changes the labels accordingly
 			if (combo.getSelectedItem().equals("Owner")) {
-				labelA.setText("Owner ID");
+				labelA.setText("Vehicle ID");
 				labelB.setText("Vehicle Info (Make, Model, Year)");
 				labelC.setText("Residency Duration");
 				button2.setText("Show Owner Log");
-			} else if (combo.getSelectedItem().equals("Client")) {
-				labelA.setText("Client ID");
-				labelB.setText("Approximate Job Duration");
-				labelC.setText("Job Deadline");
+				button3.setText("Do Stuff");
+			} 
+			else if (combo.getSelectedItem().equals("Client")) {
+				labelA.setText("Job ID");
+				labelB.setText("Job Deadline");
+				labelC.setText("Approximate Job Duration");
 				button2.setText("Show Client Log");
+				button3.setText("Calculate Completion Time");
 			}
-
+			emptyText();
 		}
-		
-		if(e.getSource() == button2) {
 
-			Desktop desktop = Desktop.getDesktop();
-			//File ownerFile1 = new File("Owner.txt"); 
-
-			try 
-			{
-			if (combo.getSelectedItem().equals("Owner")){
-				if(ownerFile.exists()){
-					desktop.open(ownerFile);   
-				}
-			} else if (combo.getSelectedItem().equals("Client")){
-				if(clientFile.exists()){
-					desktop.open(clientFile);
-				}
-			} else {
-				desktop.open(ownerFile);   
-				desktop.open(clientFile);
-			}
-				
-			} 
-			catch (IOException e1) 
-			{
-				e1.printStackTrace();
-			} 
-		
-			
-		}
-		
-		//when the button is pressed, the bottom text area should output what was input. 
 		if (e.getSource() == button) {
 			try 
 			{
 				fileProcess();
 			} 
-			catch (IOException e1) 
+			catch (Exception e1) 
 			{
 				e1.printStackTrace();
 			}
 		} 
-		if (combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
-		{
-			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());	
-		}	
-		else if (combo.getSelectedItem().equals("Client") && e.getSource() == button) 
-		{
-			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n" + "Approximate Job Duration: " + boxTwo.getText() + "\n" + "Job Deadline: " + boxThree.getText());
+		
+		if(e.getSource() == button2) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				if(combo.getSelectedItem().equals("Owner")){
+					if(ownerFile.exists()){
+						desktop.open(ownerFile);   
+					}
+				} else if (combo.getSelectedItem().equals("Client")){
+					if(clientFile.exists()){
+						desktop.open(clientFile);
+					}
+				} else {
+					desktop.open(ownerFile);   
+					desktop.open(clientFile);
+				}
+				
+			} 
+			catch(IOException e1) {
+				e1.printStackTrace();
+			} 
 		}
+
+		//outputs the data into the output box
+		if(combo.getSelectedItem().equals("Client") && e.getSource() == button3) {
+			controller.calculateCompletionTime();
+			String data = "";
+			for (Job job: controller.getJobs()) {
+				data += "Job " + job.id + ": " + job.completionTime + "\n"; 
+			}
+			output.setText(data);
+		}
+		
+		if(combo.getSelectedItem().equals("Owner") && e.getSource() == button) 
+		{
+			output.setText("Information submitted." + formattedTime + "\n" + "Owner ID: " + boxOne.getText() + "\n" + "Vehicle Info (Make, Model, Year): " + boxTwo.getText() + "\n" + "Residency Duration: " + boxThree.getText());
+		
+		}	
+		else if(combo.getSelectedItem().equals("Client") && e.getSource() == button) 
+		{
+			output.setText("Information submitted." + formattedTime + "\n" + "Client ID: " + boxOne.getText() + "\n"+ "Job Deadline: " + boxTwo.getText() + "\n" + "Approximate Job Duration: " + boxThree.getText());
+
+		}
+		emptyText();
 	}
 	
-	public void fileProcess() throws IOException {
-			if(combo.getSelectedItem().equals("Owner")) {
-				BufferedWriter ownerWriter = new BufferedWriter(new FileWriter(ownerFile,true));
-				ownerWriter.write("Timestamp: " + formattedTime);
-				ownerWriter.newLine();
-				ownerWriter.write("Owner ID: " + boxOne.getText());
-				ownerWriter.newLine();
-				ownerWriter.write("Vehicle Info: " + boxTwo.getText());
-				ownerWriter.newLine();
-				ownerWriter.write("Residency Duration: " + boxThree.getText());
-				ownerWriter.newLine();
-				ownerWriter.newLine();
-				ownerWriter.close();
-			}
-			else if (combo.getSelectedItem().equals("Client")) {
-				BufferedWriter clientWriter = new BufferedWriter(new FileWriter(clientFile,true));
-				clientWriter.write("Timestamp: " + formattedTime);
-				clientWriter.newLine();
-				clientWriter.write("Client ID: " + boxOne.getText());
-				clientWriter.newLine();
-				clientWriter.write("Approximate Job Duration : " + boxTwo.getText());
-				clientWriter.newLine();
-				clientWriter.write("Job Deadline: " + boxThree.getText());
-				clientWriter.newLine();
-				clientWriter.newLine();
-				clientWriter.close();
-			}
+	public void fileProcess() throws UnknownHostException, IOException{
+			int id = Integer.parseInt(boxOne.getText());
+			String info = boxTwo.getText();
+			double duration = Double.parseDouble(boxThree.getText());
+			String messageIn = "";
+try {
+                
+                if(combo.getSelectedItem().equals("Owner")) {
+                    Vehicle newVehicle = new Vehicle(id, info,duration);
+                    outputStream.writeUTF(newVehicle.toString());
+                    controller.recruitVehicle(newVehicle);
+                    messageIn = inputStream.readUTF();
+                    if(messageIn.equals("accept")) {
+                        System.out.println("Vehicle Accepted");
+                        writeToFile(newVehicle.toString(), ownerFile);
+                        try {
+                            connection = DriverManager.getConnection(url, username, password);
+                            String sql = "INSERT INTO owner" + "(OwnerID , name)" + "VALUES ("+ id +" ,'" + info +"')"; 
+                            Statement statement = connection.createStatement();
+                            int row = statement.executeUpdate(sql);
+                            if (row > 0)
+                                System.out.println("Data was inserted!");
+                        }catch(SQLException e){
+                            e.getMessage();
+                        }
+                            
+                    }
+                        
+            }
+                else if(combo.getSelectedItem().equals("Client")) {
+                    Job newJob = new Job(id,info,duration);
+                    outputStream.writeUTF(newJob.toString());
+                    controller.submitJob(newJob);
+                    messageIn = inputStream.readUTF();
+                    if(messageIn.equals("accept")) {
+                        System.out.println("Job Accepted");
+                        writeToFile(newJob.toString(), clientFile);
+                        try {
+                            connection = DriverManager.getConnection(url, username, password);
+                            String sql = "INSERT INTO clients" + "(ClientID , name)" + "VALUES ("+ id +" ,'" + info +"')"; 
+                            Statement statement = connection.createStatement();
+                            int row = statement.executeUpdate(sql);
+                            if (row > 0)
+                                System.out.println("Data was inserted!");
+                        }catch(SQLException e){
+                            e.getMessage();
+                        }
+                    }
+                }
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+	}
+
+		void emptyText(){
+			boxOne.setText("");
+			boxTwo.setText("");
+			boxThree.setText("");
+		}
+
+		void writeToFile(String toFile, File file) throws IOException {
+				BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, true));
+				fileWriter.newLine();
+				fileWriter.write("Timestamp: " + formattedTime);
+				fileWriter.newLine();
+				fileWriter.write(toFile);
+				fileWriter.newLine();
+				fileWriter.close();
 		}
 }
