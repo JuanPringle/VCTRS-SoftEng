@@ -198,6 +198,8 @@ public class GUI extends JFrame implements ActionListener {
 			double duration = Double.parseDouble(boxThree.getText());
 			String messageIn = "";
 			try {
+				connection = DriverManager.getConnection(url, username, password);
+				
 				if(combo.getSelectedItem().equals("Owner")) {
 					Vehicle newVehicle = new Vehicle(id, info,duration);
 					outputStream.writeUTF(newVehicle.toString());
@@ -206,20 +208,11 @@ public class GUI extends JFrame implements ActionListener {
 					if(messageIn.equals("accept")) {
 						System.out.println("Vehicle Accepted");
 						writeToFile(newVehicle.toString(), ownerFile);
-						//declares a connection to your database
-						connection = DriverManager.getConnection(url, username, password);
-						//creates an insert query
-						String sql = "INSERT INTO table1" + "(ClientID , name)" + "VALUES (23, 'David Cruise')";
-						//establishes the connection session
+						String sql = "INSERT INTO table1" + "(ClientID , name)" + "VALUES ("+ id +"," + info +")"; 
 						Statement statement = connection.createStatement();
-						//executes the query 
 						int row = statement.executeUpdate(sql);
-						//the return value is the indication of success or failure of the query execution
 						if (row > 0)
 							System.out.println("Data was inserted!");
-
-						connection.close();
-						
 					}
 						
 			}
@@ -233,7 +226,7 @@ public class GUI extends JFrame implements ActionListener {
 						writeToFile(newJob.toString(), clientFile);
 					}
 				}
-				
+				connection.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

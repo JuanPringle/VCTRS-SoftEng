@@ -2,3 +2,10 @@
 /GUI.class
 /Owner.class
 /VehicularRunner.class
+/Checkpoint.class
+/Controller.class
+/Job.class
+/Server.class
+/User.class
+/Vehicle.class
+/VehicleOwner.class
