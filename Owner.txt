@@ -1,0 +1,12 @@
+
+Timestamp: 04-19-2022 18:38:08
+ID: 7/nDuration: 8.0/nModel: sedan
+
+Timestamp: 04-26-2022 23:14:56
+ID: 12/nDuration: 132.0/nModel: 232
+
+Timestamp: 04-26-2022 23:14:56
+ID: 244/nDuration: 2442.0/nModel: 242
+
+Timestamp: 04-26-2022 23:27:34
+ID: 94/nDuration: 232.0/nModel: sdsj
