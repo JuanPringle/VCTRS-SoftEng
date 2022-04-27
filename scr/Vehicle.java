@@ -10,6 +10,6 @@ public class Vehicle {
     }
 
     public String toString(){
-        return "ID: " + id + "/nDuration: " + residencyDuration + "/nModel: " + model ;
+        return "ID: " + id + "\nDuration: " + residencyDuration + "\nModel: " + model ;
     }
 }
