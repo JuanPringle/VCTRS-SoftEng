@@ -196,7 +196,7 @@ public class GUI extends JFrame implements ActionListener {
 					outputStream.writeUTF(newVehicle.toString());
 					controller.recruitVehicle(newVehicle);
 					messageIn = inputStream.readUTF();
-					if(messageIn.equals("accept")) {
+					if(messageIn.equals("Accepted")) {
 						System.out.println("Vehicle Accepted");
 						writeToFile(newVehicle.toString(), ownerFile);
 					}
@@ -206,7 +206,7 @@ public class GUI extends JFrame implements ActionListener {
 					outputStream.writeUTF(newJob.toString());
 					controller.submitJob(newJob);
 					messageIn = inputStream.readUTF();
-					if(messageIn.equals("accept")) {
+					if(messageIn.equals("Accepted")) {
 						System.out.println("Job Accepted");
 						writeToFile(newJob.toString(), clientFile);
 					}
