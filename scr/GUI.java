@@ -8,6 +8,7 @@ import java.awt.Desktop;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.*;
 
 public class GUI extends JFrame implements ActionListener {
 	// Instance variables
@@ -24,6 +25,10 @@ public class GUI extends JFrame implements ActionListener {
 	static Socket socket;
 	static DataInputStream inputStream;
     static DataOutputStream outputStream;
+    static Connection connection = null;
+  	static String url = "jdbc:mysql://localhost:3306/vc3?useTimezone=true&serverTimezone=UTC";
+  	static String username = "root";
+  	static String password = "tosin0503#";
 	
 	LocalDateTime time = LocalDateTime.now();
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
@@ -199,6 +204,17 @@ public class GUI extends JFrame implements ActionListener {
 					if(messageIn.equals("Accepted")) {
 						System.out.println("Vehicle Accepted");
 						writeToFile(newVehicle.toString(), ownerFile);
+						try {
+                            connection = DriverManager.getConnection(url, username, password);
+                            String sql = "INSERT INTO owners" + "VALUES ("+ id +" ,'" + info +"'," + duration + "," + formattedTime+")"; 
+                            Statement statement = connection.createStatement();
+                            int row = statement.executeUpdate(sql);
+                            if (row > 0)
+                                System.out.println("Data was inserted!");
+                        }catch(SQLException e){
+                            e.getMessage();
+                        }
+						
 					}
 				}
 				else if(combo.getSelectedItem().equals("Client")) {
@@ -209,6 +225,16 @@ public class GUI extends JFrame implements ActionListener {
 					if(messageIn.equals("Accepted")) {
 						System.out.println("Job Accepted");
 						writeToFile(newJob.toString(), clientFile);
+						try {
+                            connection = DriverManager.getConnection(url, username, password);
+                            String sql = "INSERT INTO clients" + "VALUES ("+ id +" ,'" + info +"'," + duration + "," + formattedTime+")"; 
+                            Statement statement = connection.createStatement();
+                            int row = statement.executeUpdate(sql);
+                            if (row > 0)
+                                System.out.println("Data was inserted!");
+                        }catch(SQLException e){
+                            e.getMessage();
+                        }
 					}
 				}
 				
